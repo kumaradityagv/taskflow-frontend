@@ -1,26 +1,403 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #e4ecf1;
+  --foreground: #0b1820;
+  --ink: #0b1820;
+  --mist: #e4ecf1;
+  --fog: #c2d2de;
+  --spruce: #176b5c;
+  --spruce-deep: #0d473d;
+  --leaf: #2a9a82;
+  --sand: #f3efe6;
+  --sand-bright: #faf7f1;
+  --muted: #4b6070;
+  --line: color-mix(in oklab, var(--ink) 12%, transparent);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-ink: var(--ink);
+  --color-mist: var(--mist);
+  --color-fog: var(--fog);
+  --color-spruce: var(--spruce);
+  --color-spruce-deep: var(--spruce-deep);
+  --color-leaf: var(--leaf);
+  --color-sand: var(--sand);
+  --color-sand-bright: var(--sand-bright);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-syne);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--leaf) 35%, white);
+  color: var(--ink);
+}
+
+.font-display {
+  font-family: var(--font-syne), var(--font-dm-sans), system-ui, sans-serif;
+}
+
+.page-shell {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  background: var(--mist);
+  color: var(--ink);
+}
+
+.page-shell::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% -10%, rgba(42, 154, 130, 0.2), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 95% 15%, rgba(194, 210, 222, 0.85), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 70% 100%, rgba(243, 239, 230, 0.7), transparent 55%);
+}
+
+.page-shell::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid color-mix(in oklab, var(--ink) 8%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: color-mix(in oklab, var(--mist) 82%, transparent);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--spruce);
+  color: var(--sand);
+}
+
+.btn-primary:hover {
+  background: var(--spruce-deep);
+}
+
+.btn-ink {
+  background: var(--ink);
+  color: var(--sand);
+}
+
+.btn-ink:hover {
+  background: var(--spruce-deep);
+}
+
+.btn-ghost {
+  border: 1px solid color-mix(in oklab, var(--ink) 18%, transparent);
+  background: color-mix(in oklab, white 35%, transparent);
+  color: var(--ink);
+}
+
+.btn-ghost:hover {
+  border-color: color-mix(in oklab, var(--ink) 35%, transparent);
+  background: color-mix(in oklab, white 55%, transparent);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.field {
+  display: block;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.field-input {
+  width: 100%;
+  border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+  background: color-mix(in oklab, var(--sand) 70%, white);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9375rem;
+  color: var(--ink);
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.field-input::placeholder {
+  color: color-mix(in oklab, var(--muted) 65%, transparent);
+}
+
+.field-input:hover {
+  border-color: color-mix(in oklab, var(--ink) 24%, transparent);
+}
+
+.field-input:focus {
+  border-color: var(--spruce);
+  background: var(--sand-bright);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--leaf) 22%, transparent);
+}
+
+.field-input[aria-invalid="true"] {
+  border-color: #9b2c2c;
+}
+
+.field-input[aria-invalid="true"]:focus {
+  border-color: #9b2c2c;
+  box-shadow: 0 0 0 3px color-mix(in oklab, #9b2c2c 20%, transparent);
+}
+
+.field-error {
+  margin-top: 0.4rem;
+  font-size: 0.8125rem;
+  color: #9b2c2c;
+}
+
+.link-quiet {
+  color: var(--muted);
+  transition: color 0.15s ease;
+}
+
+.link-quiet:hover {
+  color: var(--ink);
+}
+
+.link-strong {
+  font-weight: 500;
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+
+.link-strong:hover {
+  text-decoration: underline;
+}
+
+.otp-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.otp-digit {
+  width: 2.75rem;
+  height: 3.25rem;
+  border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+  background: color-mix(in oklab, var(--sand) 70%, white);
+  text-align: center;
+  font-family: var(--font-dm-sans), ui-monospace, monospace;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.otp-digit:hover {
+  border-color: color-mix(in oklab, var(--ink) 24%, transparent);
+}
+
+.otp-digit:focus {
+  border-color: var(--spruce);
+  background: var(--sand-bright);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--leaf) 22%, transparent);
+}
+
+.otp-digit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (min-width: 640px) {
+  .otp-group {
+    gap: 0.65rem;
+  }
+
+  .otp-digit {
+    width: 3rem;
+    height: 3.5rem;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(14px, -10px, 0) scale(1.03);
+  }
+}
+
+@keyframes column-in {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ticket-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-rise-delay-1 {
+  animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+.animate-rise-delay-2 {
+  animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+.animate-rise-delay-3 {
+  animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.32s both;
+}
+
+.animate-rise-delay-4 {
+  animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.44s both;
+}
+
+.animate-drift {
+  animation: drift 20s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 4.5s ease-in-out infinite;
+}
+
+.board-col {
+  animation: column-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.board-col:nth-child(1) {
+  animation-delay: 0.28s;
+}
+
+.board-col:nth-child(2) {
+  animation-delay: 0.42s;
+}
+
+.board-col:nth-child(3) {
+  animation-delay: 0.56s;
+}
+
+.board-ticket {
+  animation: ticket-slide 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.board-ticket:nth-child(1) {
+  animation-delay: 0.62s;
+}
+
+.board-ticket:nth-child(2) {
+  animation-delay: 0.76s;
+}
+
+.board-ticket:nth-child(3) {
+  animation-delay: 0.9s;
+}
+
+.board-ticket:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-rise-delay-1,
+  .animate-rise-delay-2,
+  .animate-rise-delay-3,
+  .animate-rise-delay-4,
+  .animate-drift,
+  .animate-shimmer,
+  .board-col,
+  .board-ticket {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .board-ticket:hover,
+  .btn:active {
+    transform: none;
+  }
 }
