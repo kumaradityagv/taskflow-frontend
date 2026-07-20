@@ -2,11 +2,16 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { loginSchema } from "@/lib/auth-schemas";
+import { ApiError, loginUser, saveSession } from "@/lib/api";
 import FieldError from "./FieldError";
 
 export default function LoginForm() {
+  const router = useRouter();
+  const [formError, setFormError] = useState("");
   const {
     register,
     handleSubmit,
@@ -20,8 +25,19 @@ export default function LoginForm() {
     mode: "onSubmit",
   });
 
-  function onSubmit() {
-    // UI-only for now — wire to auth API later.
+  async function onSubmit(values) {
+    setFormError("");
+    try {
+      const user = await loginUser(values);
+      saveSession(user);
+      router.push("/dashboard");
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setFormError(error.message);
+      } else {
+        setFormError("Could not reach the server. Is the backend running?");
+      }
+    }
   }
 
   return (
@@ -72,12 +88,14 @@ export default function LoginForm() {
           <FieldError message={errors.password?.message} />
         </label>
 
+        <FieldError message={formError} />
+
         <button
           type="submit"
           className="btn btn-primary btn-block mt-2"
           disabled={isSubmitting}
         >
-          Log in
+          {isSubmitting ? "Logging in…" : "Log in"}
         </button>
       </form>
 

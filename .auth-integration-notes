@@ -1,0 +1,18 @@
+# Auth API integration — ACTIVE
+#
+# Frontend
+# - src/lib/api.js: createUser, loginUser, session helpers, ApiError
+# - .env.local: NEXT_PUBLIC_API_URL=http://localhost:8080
+# - SignupForm: after OTP success → createUser({ name, email, password })
+# - LoginForm: loginUser → saveSession → router.push("/")
+#
+# Backend
+# - POST /api/createUser → UserService.createUser (BCrypt, duplicate email check)
+# - POST /api/login → UserService.login (findByEmail + password match)
+# - UserRepo: findByEmail, existsByEmail
+# - SecurityConfig: permit createUser + login, CORS for localhost:3000, PasswordEncoder bean
+# - application.properties: server.error.include-message=always
+# - Responses omit password (public user map)
+#
+# Payload createUser: { customerName, email, password, status: "ACTIVE", role: "USER" }
+# Payload login: { email, password }

@@ -8,6 +8,7 @@ import {
   otpFormSchema,
   signupDetailsSchema,
 } from "@/lib/auth-schemas";
+import { ApiError, createUser } from "@/lib/api";
 import useResendCooldown from "@/hooks/useResendCooldown";
 import FieldError from "./FieldError";
 import OtpInput from "./OtpInput";
@@ -22,6 +23,7 @@ export default function SignupForm() {
     confirmPassword: "",
   });
   const [formError, setFormError] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const resend = useResendCooldown();
 
   const detailsForm = useForm({
@@ -49,7 +51,7 @@ export default function SignupForm() {
     resend.start();
   }
 
-  function handleOtpSubmit(values) {
+  async function handleOtpSubmit(values) {
     setFormError("");
 
     if (values.otp !== DEMO_OTP) {
@@ -57,7 +59,23 @@ export default function SignupForm() {
       return;
     }
 
-    setStep("done");
+    setIsCreating(true);
+    try {
+      await createUser({
+        name: account.name,
+        email: account.email,
+        password: account.password,
+      });
+      setStep("done");
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setFormError(error.message);
+      } else {
+        setFormError("Could not reach the server. Is the backend running?");
+      }
+    } finally {
+      setIsCreating(false);
+    }
   }
 
   function handleResend() {
@@ -119,11 +137,14 @@ export default function SignupForm() {
               name="otp"
               control={otpForm.control}
               render={({ field }) => (
-                <OtpInput value={field.value} onChange={field.onChange} />
+                <OtpInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={isCreating}
+                />
               )}
             />
             <FieldError message={otpForm.formState.errors.otp?.message} />
-
           </div>
 
           <FieldError message={formError} />
@@ -131,9 +152,13 @@ export default function SignupForm() {
           <button
             type="submit"
             className="btn btn-primary btn-block"
-            disabled={otpForm.formState.isSubmitting || otpValue.length !== 6}
+            disabled={
+              isCreating ||
+              otpForm.formState.isSubmitting ||
+              otpValue.length !== 6
+            }
           >
-            Verify & create account
+            {isCreating ? "Creating account…" : "Verify & create account"}
           </button>
         </form>
 
@@ -142,7 +167,7 @@ export default function SignupForm() {
           <button
             type="button"
             className="link-strong disabled:opacity-40"
-            disabled={resend.isActive}
+            disabled={resend.isActive || isCreating}
             onClick={handleResend}
           >
             {resend.isActive
